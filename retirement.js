@@ -1,28 +1,28 @@
 /*******************************
-Name: Taylor Rath
-Program: Retirement Countdown
-Date: 03/24/2026
-Program Description:
+ Name: Taylor Rath
+ Program: Retirement Countdown
+ Date: 03/24/2026
+ Program Description:
 
-*******************************/
+ *******************************/
 
 
 "use strict";
 
 // Defer in HTML allows us to grab these immediately at the top
-const getElement = selector => document.querySelector(selector);
+const $ = selector => document.querySelector(selector);
 
-const nameIn    = getElement("#client_name");
-const emailIn   = getElement("#email");
-const investIn  = getElement("#investment");
-const addIn     = getElement("#monthly_add");
-const rateIn    = getElement("#rate");
-const dateIn    = getElement("#retirement_date");
-const errBox    = getElement("#error_message");
-const statusMsg = getElement("#status_message");
-const output    = getElement("#projection_output");
-const form      = getElement("#projection_form");
-const testData  = getElement("#test_data");
+const nameIn = $("#client_name");
+const emailIn = $("#email");
+const investIn = $("#investment");
+const addIn = $("#monthly_add");
+const rateIn = $("#rate");
+const dateIn = $("#retirement_date");
+const errBox = $("#error_message");
+const statusMsg = $("#status_message");
+const output = $("#projection_output");
+const form = $("#projection_form");
+const testData = $("#test_data");
 
 let projectionTimer = null;
 
@@ -50,41 +50,49 @@ const processEntries = (evt) => {
     evt.preventDefault();
     resetForm()
 
-    const name = nameIn.value.trim();
-    const email = emailIn.value.trim();
-    const investment = parseInt(investIn.value);
-    const add = parseFloat(addIn.value);
-    const rate = parseFloat(rateIn.value);
-
     // TODO: Validate Name
-if (name === "") {
-    nameErr.textContent = "Please enter your full name";
-    isValid = false;
-}
-    // TODO: Validate Email - const emailPattern = /^[\w\.\-]+@[\w\.\-]+\.[a-zA-Z]+$/;
-const emailPattern = /^[\w\.\-]+@[\w\.\-]+\.[a-zA-Z]+$/;
-if (!emailPattern.test(email)) {
-    emailErr.textContent = "Enter your valid college email address.";
-    isValid = false;
-}
-    // TODO: Validate Date
-if (years <=0) {
-    retireErr.textContent = "Greater than 0 & less than 75 years";
-    isValid = false;
-}
-    // TODO: Numeric Validations
-if (isNaN(rate) || rate < 0) {
-    rateErr.textContent = "Annual interest rate, not less than 0 or greater than 20";
-    isValid = false;
-}
-if (isNaN(add) || add <= 0) {
-    addErr.textContent = "How much you add each month, not less than 0.";
-    isValid = false;
-}
-    if (isNaN(investment) || investment < 0) {
-        investmentErr.textContent = "Current Savings total, not less than 0";
+    if (nameIn.value.trim() === "") {
+        $("#name_error").textContent = nameIn.title;
         isValid = false;
-}
+    }
+    // TODO: Validate Email - const emailPattern = /^[\w\.\-]+@[\w\.\-]+\.[a-zA-Z]+$/;
+    const emailPattern = /^[\w\.\-]+@[\w\.\-]+\.[a-zA-Z]+$/;
+    if (!emailPattern.test(emailIn.value.trim())) {
+        $("#email_error").textContent = emailIn.title;
+        isValid = false;
+    }
+    // TODO: Validate Date
+    if(isNaN(dateIn) || dateIn < 0) {
+        $("#retire_date_error").textContent = dateIn.title;
+        isValid = false;
+    } else {
+    }
+    /* if date is empty
+     display error similar to name logic
+ else
+     years = user's year - the current year
+     if years is less or equal to 0 || greater than 75
+     display error similar to name logic
+     */
+
+    if (isNaN(investIn) || investIn < 0) {
+        $("#investment_error").textContent = investIn.title;
+        isValid = false;
+    }
+// TODO: Numeric Validations
+    /*TODO: do the same for the other two numeric input values
+    based on the input field's title data validation message
+    */
+
+    if (isNaN(rateIn) || rateIn < 0) {
+        $("#rate_error").textContent = rateIn.title;
+        isValid = false;
+    }
+    if (isNaN(addIn) || addIn <= 0) {
+        $("#add_error").textContent = addIn.title;
+        isValid = false;
+
+    }
     /* TODO: Code try-catch logic
         try
             if not valid then throw error "Please correct the entries highlighted below."
@@ -96,7 +104,7 @@ if (isNaN(add) || add <= 0) {
      */
     try {
         if (!isValid) {
-            new Error("Please correct the entries highlighted below.");
+            Error("Please correct the entries highlighted below.");
         }
         document.body.style.width = "350px";
         startProjection(nameIn.value, investIn.value, addIn.value, rateIn.value, years);
@@ -117,47 +125,65 @@ const startProjection = (name, bal, add, rate, years) => {
     let formattedBal = formatter.format(bal);
     output.innerHTML = `Year ${startYear} = ${formattedBal}`;
 
-    for (let i = 0; i < 12; i++) {
-        bal = (bal + add) * (1 + (rate / 12 / 100)).toFixed(2);
-    }
+    projectionTimer = setInterval(() => {
 
-    output.innerHTML += `${formattedBal}`;
-    if (count >= years) {
-
-    }
-
-    /* TODO: setup an interval to do the following
         for (let i = 0; i < 12; i++) {
-            bal = ((bal + add) * (1 + (rate / 12 / 100))).toFixed(2);
+            bal = (bal + add) * (1 + (rate / 12 / 100)).toFixed(2);
         }
-        format the balance like the starting code above
-        update the output like the starting code above
-        if count is >= years
-            clear interval
-            update the statusMsg like the starting code above
-            set the statusMsg color to green like the starting code above
-        end if
-        add one to the count
-     */
-};
 
-const setTestData = () => {
-    resetForm();
-    // TODO: set default values for all input fields
-};
+        output.innerHTML += `${formattedBal}`;
+        if (count >= years) {
 
-const resetForm = () => {
-    /* TODO:
-        clear all input fields
-        clear the interval
+        }
+
+        /* TODO: setup an interval to do the following
+            for (let i = 0; i < 12; i++) {
+                bal = ((bal + add) * (1 + (rate / 12 / 100))).toFixed(2);
+            }
+            format the balance like the starting code above
+            update the output like the starting code above
+            if count is >= years
+                clear interval
+                update the statusMsg like the starting code above
+                set the statusMsg color to green like the starting code above
+            end if
+            add one to the count
+         */
+    }, 1000);
+    };
+
+    const setTestData = () => {
+        resetForm();
+        // TODO: set default values for all input fields
+        /* TODO: set default value for all input fields
+Setup the future date to 10 years from now:
+(1) create a const variable named future and set it to the current date (Ch
+8)
+(2) add 10 years to the future date variable (Ch 8)
+(3) use toISOString().split('T')[0] to display the future date (Ch 8)
+*/
+    };
+
+    const resetForm = () => {
+        errBox.textContent = "";
+        output.textContent = "";
+        statusMsg.textContent = "";
+
         document.querySelectorAll(".error").forEach(s => s.textContent = "*");
-        set the body width to 350px (like code above)
-        set the focus to the name input field
-     */
-}
+        document.body.style.width = "350px";
+        statusMsg.style.color = "red";
+        nameIn.focus();
+        /* TODO:
+            clear all input fields
+            clear the interval
+            document.querySelectorAll(".error").forEach(s => s.textContent = "*");
+            set the body width to 350px (like code above)
+            set the focus to the name input field
+         */
+    };
 
-document.addEventListener("DOMContentLoaded", () => {
-    form.addEventListener("submit", processEntries);
-    form.addEventListener("reset", resetForm);
-    testData.addEventListener("click", setTestData);
-});
+    document.addEventListener("DOMContentLoaded", () => {
+        form.addEventListener("submit", processEntries);
+        form.addEventListener("reset", resetForm);
+        testData.addEventListener("click", setTestData);
+    });

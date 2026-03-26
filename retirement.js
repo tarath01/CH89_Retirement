@@ -107,7 +107,7 @@ const processEntries = (evt) => {
             Error("Please correct the entries highlighted below.");
         }
         document.body.style.width = "350px";
-        startProjection(nameIn.value, investIn.value, addIn.value, rateIn.value, years);
+        startProjection(nameIn.value, investIn, addIn, rateIn, years);
     } catch (e) {
         document.body.style.width = "700px";
         errBox.textContent = e.message;
@@ -133,9 +133,11 @@ const startProjection = (name, bal, add, rate, years) => {
 
         output.innerHTML += `${formattedBal}`;
         if (count >= years) {
-
+            output.textContent = "";
+            statusMsg.textContent = `Calculation Completed!`;
+            statusMsg.style.color = "green";
+            let count = 1;
         }
-
         /* TODO: setup an interval to do the following
             for (let i = 0; i < 12; i++) {
                 bal = ((bal + add) * (1 + (rate / 12 / 100))).toFixed(2);
@@ -149,11 +151,21 @@ const startProjection = (name, bal, add, rate, years) => {
             end if
             add one to the count
          */
-    }, 1000);
-    };
+
+    });
 
     const setTestData = () => {
         resetForm();
+        nameIn.value = "Taylor Rath";
+        emailIn.value = "tarath01@wsc.edu";
+        investIn.value = 100_000.00;
+        addIn.value = 500.00;
+        rateIn.value = 5.5;
+
+        const retireDate = new Date();
+       retireDate. setFullYear(retireDate.getFullYear() + 10);
+        dateIn.value = retireDate.toISOString().split('T')[0];
+
         // TODO: set default values for all input fields
         /* TODO: set default value for all input fields
 Setup the future date to 10 years from now:

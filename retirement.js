@@ -33,15 +33,6 @@ const formatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 2
 });
 
-//error message fields
-const nameErr = document.querySelector("#name_error");
-const emailErr = document.querySelector("#email_error");
-const investmentErr = document.querySelector("#investment_error");
-const rateErr = document.querySelector("#rate_error");
-const addErr = document.querySelector("#add_error");
-const retireErr = document.querySelector("#retire_date_error");
-
-
 const processEntries = (evt) => {
     let isValid = true;
     let years = 0;
@@ -62,10 +53,19 @@ const processEntries = (evt) => {
         isValid = false;
     }
     // TODO: Validate Date
-    if(isNaN(dateIn) || dateIn < 0) {
+    if (dateIn.value.trim() === "") {
         $("#retire_date_error").textContent = dateIn.title;
         isValid = false;
     } else {
+        const currentYear = new Date().getFullYear();
+        const userYear = new Date(dateIn.value).getFullYear();
+
+        years = userYear - currentYear;
+
+        if (years <= 0 || years > 75) {
+            $("#retire_date_error").textContent = dateIn.title;
+            isValid = false;
+        }
     }
     /* if date is empty
      display error similar to name logic
@@ -75,7 +75,7 @@ const processEntries = (evt) => {
      display error similar to name logic
      */
 
-    if (isNaN(investIn) || investIn < 0) {
+    if (isNaN(investIn.value) || investIn.value < 0) {
         $("#investment_error").textContent = investIn.title;
         isValid = false;
     }
@@ -84,14 +84,14 @@ const processEntries = (evt) => {
     based on the input field's title data validation message
     */
 
-    if (isNaN(rateIn) || rateIn < 0) {
+    if (isNaN(rateIn.value) || rateIn.value < 0) {
         $("#rate_error").textContent = rateIn.title;
         isValid = false;
     }
-    if (isNaN(addIn) || addIn <= 0) {
+
+    if (isNaN(addIn.value) || addIn.value <= 0) {
         $("#add_error").textContent = addIn.title;
         isValid = false;
-
     }
     /* TODO: Code try-catch logic
         try
@@ -104,10 +104,10 @@ const processEntries = (evt) => {
      */
     try {
         if (!isValid) {
-            Error("Please correct the entries highlighted below.");
+            throw new Error("Please correct the entries highlighted below.");
         }
         document.body.style.width = "350px";
-        startProjection(nameIn.value, investIn, addIn, rateIn, years);
+        startProjection(nameIn.value, investIn.value, addIn.value, rateIn.value, years);
     } catch (e) {
         document.body.style.width = "700px";
         errBox.textContent = e.message;
@@ -123,21 +123,23 @@ const startProjection = (name, bal, add, rate, years) => {
     const startYear = new Date().getFullYear();
 
     let formattedBal = formatter.format(bal);
-    output.innerHTML = `Year ${startYear} = ${formattedBal}`;
+    output.textContent = `Year ${startYear} = ${formattedBal}`;
 
     projectionTimer = setInterval(() => {
 
         for (let i = 0; i < 12; i++) {
-            bal = (bal + add) * (1 + (rate / 12 / 100)).toFixed(2);
+            bal = ((bal + add) * (1 + (rate / 12 / 100))).toFixed(2);
         }
+        let formattedBal = formatter.format(bal);
+        output.textContent = `Year ${startYear} = ${formattedBal}`;
 
-        output.innerHTML += `${formattedBal}`;
         if (count >= years) {
-            output.textContent = "";
+            clearInterval(projectionTimer);
             statusMsg.textContent = `Calculation Completed!`;
             statusMsg.style.color = "green";
-            let count = 1;
         }
+            let count = 1;
+
         /* TODO: setup an interval to do the following
             for (let i = 0; i < 12; i++) {
                 bal = ((bal + add) * (1 + (rate / 12 / 100))).toFixed(2);
@@ -151,8 +153,8 @@ const startProjection = (name, bal, add, rate, years) => {
             end if
             add one to the count
          */
-
-    });
+        }, 1000);
+    };
 
     const setTestData = () => {
         resetForm();
@@ -163,7 +165,7 @@ const startProjection = (name, bal, add, rate, years) => {
         rateIn.value = 5.5;
 
         const retireDate = new Date();
-       retireDate. setFullYear(retireDate.getFullYear() + 10);
+        retireDate.setFullYear(retireDate.getFullYear() + 10);
         dateIn.value = retireDate.toISOString().split('T')[0];
 
         // TODO: set default values for all input fields

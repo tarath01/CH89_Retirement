@@ -15,7 +15,7 @@ const $ = selector => document.querySelector(selector);
 const nameIn = $("#client_name");
 const emailIn = $("#email");
 const investIn = $("#investment");
-const addIn = $("#monthly_add");
+const monthIn = $("#monthly_add");
 const rateIn = $("#rate");
 const dateIn = $("#retirement_date");
 const errBox = $("#error_message");
@@ -53,19 +53,11 @@ const processEntries = (evt) => {
         isValid = false;
     }
     // TODO: Validate Date
-    if (dateIn.value.trim() === "") {
+    if (new Date(dateIn.value).toString() === "Invalid Date" || years < 0 || years > 75)
+    {
         $("#retire_date_error").textContent = dateIn.title;
         isValid = false;
-    } else {
-        const currentYear = new Date().getFullYear();
-        const userYear = new Date(dateIn.value).getFullYear();
-
-        years = userYear - currentYear;
-
-        if (years <= 0 || years > 75) {
-            $("#retire_date_error").textContent = dateIn.title;
-            isValid = false;
-        }
+        years = new Date(dateIn.value).getFullYear() - new Date().getFullYear();
     }
     /* if date is empty
      display error similar to name logic
@@ -75,7 +67,7 @@ const processEntries = (evt) => {
      display error similar to name logic
      */
 
-    if (isNaN(investIn.value) || investIn.value < 0) {
+    if (investIn.value === "" || isNaN(investIn.value) || investIn.value < 0) {
         $("#investment_error").textContent = investIn.title;
         isValid = false;
     }
@@ -84,13 +76,13 @@ const processEntries = (evt) => {
     based on the input field's title data validation message
     */
 
-    if (isNaN(rateIn.value) || rateIn.value < 0) {
+    if (rateIn.value === "" || isNaN(rateIn.value) || rateIn.value < 0) {
         $("#rate_error").textContent = rateIn.title;
         isValid = false;
     }
 
-    if (isNaN(addIn.value) || addIn.value <= 0) {
-        $("#add_error").textContent = addIn.title;
+    if (monthIn.value === "" || isNaN(monthIn.value) || monthIn.value < 0) {
+        $("#add_error").textContent = monthIn.title;
         isValid = false;
     }
     /* TODO: Code try-catch logic
@@ -107,7 +99,7 @@ const processEntries = (evt) => {
             throw new Error("Please correct the entries highlighted below.");
         }
         document.body.style.width = "350px";
-        startProjection(nameIn.value, investIn.value, addIn.value, rateIn.value, years);
+        startProjection(nameIn.value, investIn.value, monthIn.value, rateIn.value, years);
     } catch (e) {
         document.body.style.width = "700px";
         errBox.textContent = e.message;
@@ -138,7 +130,6 @@ const startProjection = (name, bal, add, rate, years) => {
             statusMsg.textContent = `Calculation Completed!`;
             statusMsg.style.color = "green";
         }
-            let count = 1;
 
         /* TODO: setup an interval to do the following
             for (let i = 0; i < 12; i++) {
@@ -161,7 +152,7 @@ const startProjection = (name, bal, add, rate, years) => {
         nameIn.value = "Taylor Rath";
         emailIn.value = "tarath01@wsc.edu";
         investIn.value = 100_000.00;
-        addIn.value = 500.00;
+        monthIn.value = 500.00;
         rateIn.value = 5.5;
 
         const retireDate = new Date();

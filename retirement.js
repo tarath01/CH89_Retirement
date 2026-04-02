@@ -1,4 +1,4 @@
-/*******************************
+/**
  Name: Taylor Rath
  Program: Retirement Countdown
  Date: 03/24/2026
@@ -10,28 +10,86 @@
  Use this program as a fun way to determine
  when you'll be able to end working and let the fun in life begin!
  GitHub: https://github.com/tarath01/CH89_Retirement
- *******************************/
+ */
 
-
+/**
+ * What this file is used for
+ * @author - Taylor Rath
+ * @see {@link https://github.com/tarath01/CH89_Retirement | GitHub}
+ * @since - 04/02/2026
+ */
 "use strict";
 
 // Defer in HTML allows us to grab these immediately at the top
+/**
+ * A short arrow function expression used to get a hold of a DOM element
+ * @param selector - DOM element to get a hold of
+ * @returns {HTMLAnchorElement | HTMLElement | HTMLAreaElement | HTMLAudioElement | HTMLBaseElement | HTMLQuoteElement | HTMLBodyElement | HTMLBRElement | HTMLButtonElement | HTMLCanvasElement | HTMLTableCaptionElement | HTMLTableColElement | HTMLDataElement | HTMLDataListElement | HTMLModElement | HTMLDetailsElement | HTMLDialogElement | HTMLDivElement | HTMLDListElement | HTMLEmbedElement | HTMLFieldSetElement | HTMLFormElement | HTMLHeadingElement | HTMLHeadElement | HTMLHRElement | HTMLHtmlElement | HTMLIFrameElement | HTMLImageElement | HTMLInputElement | HTMLLabelElement | HTMLLegendElement | HTMLLIElement | HTMLLinkElement | HTMLMapElement | HTMLMenuElement | HTMLMetaElement | HTMLMeterElement | HTMLObjectElement | HTMLOListElement | HTMLOptGroupElement | HTMLOptionElement | HTMLOutputElement | HTMLParagraphElement | HTMLPictureElement | HTMLPreElement | HTMLProgressElement | HTMLScriptElement | HTMLSelectElement | HTMLSlotElement | HTMLSourceElement | HTMLSpanElement | HTMLStyleElement | HTMLTableElement | HTMLTableSectionElement | HTMLTableCellElement | HTMLTemplateElement | HTMLTextAreaElement | HTMLTimeElement | HTMLTitleElement | HTMLTableRowElement | HTMLTrackElement | HTMLUListElement | HTMLVideoElement}
+ */
 const $ = selector => document.querySelector(selector);
 
+/**
+ * The user's name
+ * @type {HTMLInputElement}
+ */
 const nameIn = $("#client_name");
+/**
+ * The user's email
+ * @type {HTMLInputElement}
+ */
 const emailIn = $("#email");
+/**
+ * The user's investment
+ * @type {HTMLInputElement}
+ */
 const investIn = $("#investment");
+/**
+ * The user's monthly add
+ * @type {HTMLInputElement}
+ */
 const addIn = $("#monthly_add");
+/**
+ * The user's rate
+ * @type {HTMLInputElement}
+ */
 const rateIn = $("#rate");
+/**
+ * The user's retirement date
+ * @type {HTMLInputElement}
+ */
 const dateIn = $("#retirement_date");
+/**
+ * The error message
+ * @type {HTMLInputElement}
+ */
 const errBox = $("#error_message");
+/**
+ * The user's status message
+ * @type {HTMLInputElement}
+ */
 const statusMsg = $("#status_message");
+/**
+ * The user's output
+ * @type {HTMLInputElement}
+ */
 const output = $("#projection_output");
+/**
+ * The projection form
+ * @type {HTMLInputElement}
+ */
 const form = $("#projection_form");
+/**
+ * The testing data
+ * @type {HTMLInputElement}
+ */
 const testData = $("#test_data");
 
 let projectionTimer = null;
 
+/**
+ *
+ * @type {Intl.NumberFormat} en-US Currency
+ */
 const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -39,6 +97,10 @@ const formatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 2
 });
 
+/**
+ *
+ * @param {SubmitEvent} evt - we dont use this for anything
+ */
 const processEntries = (evt) => {
     let isValid = true;
     let years = 0;
@@ -88,6 +150,14 @@ const processEntries = (evt) => {
         if (!isValid) {
             throw new Error("Please correct the entries highlighted below.");
         }
+        localStorage.name = nameIn.value;
+        localStorage.email = emailIn.value;
+        localStorage.invest = investIn.value;
+        localStorage.add = addIn.value;
+        localStorage.rate = rateIn.value;
+        localStorage.date = dateIn.value;
+
+
         document.body.style.width = "350px";
         startProjection(nameIn.value,
             Number(investIn.value),
@@ -166,4 +236,13 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", processEntries);
     form.addEventListener("reset", resetForm);
     testData.addEventListener("click", setTestData);
+
+    nameIn.value = localStorage.getItem("name");
+    emailIn.value = localStorage.getItem("email");
+    investIn.value = localStorage.getItem("invest");
+    addIn.value = localStorage.getItem("add");
+    rateIn.value = localStorage.getItem("rate");
+    dateIn.value = localStorage.getItem("date");
+
+
 });

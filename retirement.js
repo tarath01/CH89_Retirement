@@ -3,7 +3,13 @@
  Program: Retirement Countdown
  Date: 03/24/2026
  Program Description:
-
+ This program collects your information to calculate a countdown for your retirement.<br>
+ Providing your Name, Email, Current Savings, Monthly Contribution, Estimated Rate Percentage, and lastly
+ your Retirement Date.<br>Using this information that you've provided, you will then be able to
+ calculate when you will be able to retire.
+ Use this program as a fun way to determine
+ when you'll be able to end working and let the fun in life begin!
+ GitHub: https://github.com/tarath01/CH89_Retirement
  *******************************/
 
 
@@ -15,7 +21,7 @@ const $ = selector => document.querySelector(selector);
 const nameIn = $("#client_name");
 const emailIn = $("#email");
 const investIn = $("#investment");
-const monthIn = $("#monthly_add");
+const addIn = $("#monthly_add");
 const rateIn = $("#rate");
 const dateIn = $("#retirement_date");
 const errBox = $("#error_message");
@@ -41,65 +47,52 @@ const processEntries = (evt) => {
     evt.preventDefault();
     resetForm()
 
-    // TODO: Validate Name
+    //name validation
     if (nameIn.value.trim() === "") {
         $("#name_error").textContent = nameIn.title;
         isValid = false;
     }
-    // TODO: Validate Email - const emailPattern = /^[\w\.\-]+@[\w\.\-]+\.[a-zA-Z]+$/;
+    //email validation
     const emailPattern = /^[\w\.\-]+@[\w\.\-]+\.[a-zA-Z]+$/;
     if (!emailPattern.test(emailIn.value.trim())) {
         $("#email_error").textContent = emailIn.title;
         isValid = false;
     }
-    // TODO: Validate Date
-    if (new Date(dateIn.value).toString() === "Invalid Date" || years < 0 || years > 75)
-    {
+    //date validation
+    if (new Date(dateIn.value).toString() === "Invalid Date" || years < 0 || years > 75) {
         $("#retire_date_error").textContent = dateIn.title;
         isValid = false;
         years = new Date(dateIn.value).getFullYear() - new Date().getFullYear();
     }
-    /* if date is empty
-     display error similar to name logic
- else
-     years = user's year - the current year
-     if years is less or equal to 0 || greater than 75
-     display error similar to name logic
-     */
 
+    //investment validation
     if (investIn.value === "" || isNaN(investIn.value) || investIn.value < 0) {
         $("#investment_error").textContent = investIn.title;
         isValid = false;
     }
-// TODO: Numeric Validations
-    /*TODO: do the same for the other two numeric input values
-    based on the input field's title data validation message
-    */
 
+    //rate validation
     if (rateIn.value === "" || isNaN(rateIn.value) || rateIn.value < 0) {
         $("#rate_error").textContent = rateIn.title;
         isValid = false;
     }
 
-    if (monthIn.value === "" || isNaN(monthIn.value) || monthIn.value < 0) {
-        $("#add_error").textContent = monthIn.title;
+    //monthly add validation
+    if (addIn.value === "" || isNaN(addIn.value) || addIn.value < 0) {
+        $("#add_error").textContent = addIn.title;
         isValid = false;
     }
-    /* TODO: Code try-catch logic
-        try
-            if not valid then throw error "Please correct the entries highlighted below."
-            document.body.style.width = "350px";
-            startProjection(nameIn.value, invest, add, rate, years);
-         catch(e)
-            set the body width to 700px (like code above)
-            errBox.innerText = e.message;
-     */
+
+    //try catch logic
     try {
         if (!isValid) {
             throw new Error("Please correct the entries highlighted below.");
         }
         document.body.style.width = "350px";
-        startProjection(nameIn.value, investIn.value, monthIn.value, rateIn.value, years);
+        startProjection(nameIn.value,
+            Number(investIn.value),
+            Number(addIn.value),
+            Number(rateIn.value),years);
     } catch (e) {
         document.body.style.width = "700px";
         errBox.textContent = e.message;
@@ -108,87 +101,69 @@ const processEntries = (evt) => {
 
 const startProjection = (name, bal, add, rate, years) => {
     statusMsg.textContent = `Live Projection: ${name}`;
-    statusMsg.style.color = "red";
+    statusMsg.style.color = "black";
     let count = 1;
 
-    // TO-DO: startYear = the current year
+    //start year = current date
     const startYear = new Date().getFullYear();
 
+    // format balance & year output
     let formattedBal = formatter.format(bal);
     output.textContent = `Year ${startYear} = ${formattedBal}`;
 
     projectionTimer = setInterval(() => {
-
+        //for balance
         for (let i = 0; i < 12; i++) {
             bal = ((bal + add) * (1 + (rate / 12 / 100))).toFixed(2);
         }
+        //format balance
         let formattedBal = formatter.format(bal);
-        output.textContent = `Year ${startYear} = ${formattedBal}`;
+        output.textContent = `Year ${startYear + count} = ${formattedBal}`;
 
+        //if count years
         if (count >= years) {
             clearInterval(projectionTimer);
-            statusMsg.textContent = `Calculation Completed!`;
-            statusMsg.style.color = "green";
+            statusMsg.textContent = "Calculation Completed!";
+            statusMsg.style.color = "black";
         }
+        //add count
+        count++;
 
-        /* TODO: setup an interval to do the following
-            for (let i = 0; i < 12; i++) {
-                bal = ((bal + add) * (1 + (rate / 12 / 100))).toFixed(2);
-            }
-            format the balance like the starting code above
-            update the output like the starting code above
-            if count is >= years
-                clear interval
-                update the statusMsg like the starting code above
-                set the statusMsg color to green like the starting code above
-            end if
-            add one to the count
-         */
-        }, 1000);
-    };
+    }, 1000);
+};
 
-    const setTestData = () => {
-        resetForm();
-        nameIn.value = "Taylor Rath";
-        emailIn.value = "tarath01@wsc.edu";
-        investIn.value = 100_000.00;
-        monthIn.value = 500.00;
-        rateIn.value = 5.5;
+const setTestData = () => {
+    resetForm();
+    //default data
+    nameIn.value = "Taylor Rath";
+    emailIn.value = "tarath01@wsc.edu";
+    investIn.value = 100_000.00;
+    addIn.value = 500.00;
+    rateIn.value = 5.5;
 
-        const retireDate = new Date();
-        retireDate.setFullYear(retireDate.getFullYear() + 10);
-        dateIn.value = retireDate.toISOString().split('T')[0];
+    //calculate retirement date
+    const retireDate = new Date();
+    retireDate.setFullYear(retireDate.getFullYear() + 10);
+    dateIn.value = retireDate.toISOString().split('T')[0];
 
-        // TODO: set default values for all input fields
-        /* TODO: set default value for all input fields
-Setup the future date to 10 years from now:
-(1) create a const variable named future and set it to the current date (Ch
-8)
-(2) add 10 years to the future date variable (Ch 8)
-(3) use toISOString().split('T')[0] to display the future date (Ch 8)
-*/
-    };
+};
 
-    const resetForm = () => {
-        errBox.textContent = "";
-        output.textContent = "";
-        statusMsg.textContent = "";
+const resetForm = () => {
+    errBox.textContent = "";
+    output.textContent = "";
+    statusMsg.textContent = "";
 
-        document.querySelectorAll(".error").forEach(s => s.textContent = "*");
-        document.body.style.width = "350px";
-        statusMsg.style.color = "red";
-        nameIn.focus();
-        /* TODO:
-            clear all input fields
-            clear the interval
-            document.querySelectorAll(".error").forEach(s => s.textContent = "*");
-            set the body width to 350px (like code above)
-            set the focus to the name input field
-         */
-    };
+    document.querySelectorAll(".error").forEach(s => s.textContent = "*");
+    document.body.style.width = "350px";
+    statusMsg.style.color = "red";
+    //reset focus
+    nameIn.focus();
+    //clear interval within reset
+    clearInterval(projectionTimer);
+};
 
-    document.addEventListener("DOMContentLoaded", () => {
-        form.addEventListener("submit", processEntries);
-        form.addEventListener("reset", resetForm);
-        testData.addEventListener("click", setTestData);
-    });
+document.addEventListener("DOMContentLoaded", () => {
+    form.addEventListener("submit", processEntries);
+    form.addEventListener("reset", resetForm);
+    testData.addEventListener("click", setTestData);
+});

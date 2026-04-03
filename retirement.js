@@ -105,47 +105,66 @@ const processEntries = (evt) => {
     let isValid = true;
     let years = 0;
 
-    //prevent form from being submitted to server
+    /**
+     * prevent form from being submitted to server
+     */
     evt.preventDefault();
     resetForm()
 
-    //name validation
+    /**
+     * name validation
+     */
     if (nameIn.value.trim() === "") {
         $("#name_error").textContent = nameIn.title;
         isValid = false;
     }
-    //email validation
+    /**
+     * email validation
+     * @type {RegExp}
+     */
     const emailPattern = /^[\w\.\-]+@[\w\.\-]+\.[a-zA-Z]+$/;
     if (!emailPattern.test(emailIn.value.trim())) {
         $("#email_error").textContent = emailIn.title;
         isValid = false;
     }
-    //date validation
+    /**
+     * date validation
+     */
     if (new Date(dateIn.value).toString() === "Invalid Date" || years < 0 || years > 75) {
         $("#retire_date_error").textContent = dateIn.title;
         isValid = false;
         years = new Date(dateIn.value).getFullYear() - new Date().getFullYear();
     }
 
-    //investment validation
+    /**
+     * investment validation
+     */
+
     if (investIn.value === "" || isNaN(investIn.value) || investIn.value < 0) {
         $("#investment_error").textContent = investIn.title;
         isValid = false;
     }
 
-    //rate validation
+    /**
+     * rate validation
+     */
+
     if (rateIn.value === "" || isNaN(rateIn.value) || rateIn.value < 0) {
         $("#rate_error").textContent = rateIn.title;
         isValid = false;
     }
 
-    //monthly add validation
+    /**
+     * monthly add validation
+     */
     if (addIn.value === "" || isNaN(addIn.value) || addIn.value < 0) {
         $("#add_error").textContent = addIn.title;
         isValid = false;
     }
 
-    //try catch logic
+    /**
+     * try catch logic
+     */
     try {
         if (!isValid) {
             throw new Error("Please correct the entries highlighted below.");
@@ -174,29 +193,44 @@ const startProjection = (name, bal, add, rate, years) => {
     statusMsg.style.color = "black";
     let count = 1;
 
-    //start year = current date
+    /**
+     * start year = current date
+     * @type {number}
+     */
     const startYear = new Date().getFullYear();
 
-    // format balance & year output
+    /**
+     * format balance & year output
+     * @type {string}
+     */
     let formattedBal = formatter.format(bal);
     output.textContent = `Year ${startYear} = ${formattedBal}`;
 
     projectionTimer = setInterval(() => {
-        //for balance
+        /**
+         * for balance
+         */
         for (let i = 0; i < 12; i++) {
             bal = ((bal + add) * (1 + (rate / 12 / 100))).toFixed(2);
         }
-        //format balance
+        /**
+         * format balance
+         * @type {string}
+         */
         let formattedBal = formatter.format(bal);
         output.textContent = `Year ${startYear + count} = ${formattedBal}`;
 
-        //if count years
+        /**
+         * if count years
+         */
         if (count >= years) {
             clearInterval(projectionTimer);
             statusMsg.textContent = "Calculation Completed!";
             statusMsg.style.color = "black";
         }
-        //add count
+        /**
+         * add count
+         */
         count++;
 
     }, 1000);
@@ -211,7 +245,10 @@ const setTestData = () => {
     addIn.value = 500.00;
     rateIn.value = 5.5;
 
-    //calculate retirement date
+    /**
+     * calculate retirement date
+     * @type {Date}
+     */
     const retireDate = new Date();
     retireDate.setFullYear(retireDate.getFullYear() + 10);
     dateIn.value = retireDate.toISOString().split('T')[0];
@@ -226,9 +263,13 @@ const resetForm = () => {
     document.querySelectorAll(".error").forEach(s => s.textContent = "*");
     document.body.style.width = "350px";
     statusMsg.style.color = "red";
-    //reset focus
+    /**
+     * reset focus
+     */
     nameIn.focus();
-    //clear interval within reset
+    /**
+     * clear interval within reset
+     */
     clearInterval(projectionTimer);
 };
 

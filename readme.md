@@ -30,6 +30,7 @@ Use this program as a fun way to determine when you'll be able to end working an
 - getFullYear
 - Try-Catch
 - Formation
+- Web Storage
 --------------
 ## Screenshots
 

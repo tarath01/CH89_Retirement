@@ -1,19 +1,11 @@
 /**
- Name: Taylor Rath
- Program: Retirement Countdown
- Date: 03/24/2026
- Program Description:
- This program collects your information to calculate a countdown for your retirement.<br>
- Providing your Name, Email, Current Savings, Monthly Contribution, Estimated Rate Percentage, and lastly
- your Retirement Date.<br>Using this information that you've provided, you will then be able to
- calculate when you will be able to retire.
- Use this program as a fun way to determine
- when you'll be able to end working and let the fun in life begin!
- GitHub: https://github.com/tarath01/CH89_Retirement
- */
-
-/**
- * What this file is used for
+ * Retirement Countdown Program
+ * This program collects your information to calculate a countdown for your retirement.<br>
+ *  Providing your Name, Email, Current Savings, Monthly Contribution, Estimated Rate Percentage, and lastly
+ *  your Retirement Date.<br>Using this information that you've provided, you will then be able to
+ *  calculate when you will be able to retire.
+ *  Use this program as a fun way to determine
+ *  when you'll be able to end working and let the fun in life begin!
  * @author - Taylor Rath
  * @see {@link https://github.com/tarath01/CH89_Retirement | GitHub}
  * @since - 04/02/2026
@@ -87,7 +79,7 @@ const testData = $("#test_data");
 let projectionTimer = null;
 
 /**
- *
+ *Used to display a numeric value as US currency
  * @type {Intl.NumberFormat} en-US Currency
  */
 const formatter = new Intl.NumberFormat('en-US', {
@@ -278,12 +270,12 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("reset", resetForm);
     testData.addEventListener("click", setTestData);
 
-    nameIn.value = localStorage.getItem("name");
-    emailIn.value = localStorage.getItem("email");
-    investIn.value = localStorage.getItem("invest");
-    addIn.value = localStorage.getItem("add");
-    rateIn.value = localStorage.getItem("rate");
-    dateIn.value = localStorage.getItem("date");
+    nameIn.value = localStorage.name ?? "";
+    emailIn.value = localStorage.email ?? "";
+    investIn.value = localStorage.invest ?? "";
+    addIn.value = localStorage.add ?? "";
+    rateIn.value = localStorage.rate ?? "";
+    dateIn.value = localStorage.date ?? "";
 
 
 });
